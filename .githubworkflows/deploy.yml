@@ -1,0 +1,36 @@
+name: Auto-Deploy Laravel to Hostinger via FTP
+
+on:
+  push:
+    branches:
+      - main   # Change if you deploy from a different branch
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: FTP Deploy Laravel Root
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./             # Laravel project root
+          server-dir: /laravel/     # Remote folder where Laravel root is hosted
+          git-ftp-args: --insecure
+
+      - name: FTP Deploy Public Folder to public_html
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./public       # Local Laravel public folder
+          server-dir: /public_html  # Remote folder served by Hostinger
+          git-ftp-args: --insecure
