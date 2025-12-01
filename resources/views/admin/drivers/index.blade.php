@@ -993,7 +993,7 @@ html, body {
                         <i class="fas fa-car-side"></i> Driver command
                     @endif
                 </span>
-                <h3>{{ $isArchivedView ? 'The archive never forgets.' : 'Every operator ready for the next dispatch. SISAHS hdsihdsidfdfdf' }}</h3>
+                <h3>{{ $isArchivedView ? 'The archive never forgets.' : 'Every operator ready for the next dispatch. SISAdfdfdfdfHS hdsihdsidfdfdf' }}</h3>
                 <p>
                     @if($isArchivedView)
                         Browse preserved driver records, revisit driver details, and keep institutional memory within reach.
