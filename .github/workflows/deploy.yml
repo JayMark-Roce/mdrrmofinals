@@ -47,24 +47,24 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🚚 Upload to public_html
+      - name: 🚚 Deploy to Hostinger /public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          server-dir: /public_html/
+          server-dir: /public_html
           local-dir: ./
           exclude: |
-            node_modules/**
-            vendor/**
-            .git/**
-            .github/**
-            tests/**
-            storage/**
+            **/node_modules/**
+            **/vendor/**
+            **/.git/**
+            **/.github/**
+            **/tests/**
+            **/storage/**
+            .ftp-deploy-sync-state.json
             README.md
-            vite.config.js
             package.json
             package-lock.json
-            .ftp-deploy-sync-state.json
+            vite.config.js
