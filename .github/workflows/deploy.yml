@@ -32,7 +32,7 @@
 
 
 # ```
-name: 🚀 Auto Deploy to Hostinger
+name: 🚀 Quick Test Deploy to Hostinger
 
 on:
   push:
@@ -42,18 +42,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: ⬇️ Checkout Code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 🔍 DEBUG: List files that GitHub Actions sees
-      - name: List files being deployed
-        run: |
-          echo "FILES IN CURRENT DIRECTORY:"
-          ls -R .
-
-      - name: 🚚 Upload Everything to public_html
+      - name: 🚚 FTP Deploy (minimal config)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -62,29 +55,4 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
           local-dir: ./
-          exclude: |
-            node_modules/**
-            vendor/**
-            .git/**
-            .github/**
-            tests/**
-            storage/**
-            README.md
-            vite.config.js
-            package.json
-            package-lock.json
-            .ftp-deploy-sync-state.json
-
-      # 2️⃣ Upload public/ to actual public_html root
-      - name: 🌐 Upload public/ to public_html root
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          server-dir: /
-          local-dir: ./public/
-          exclude: |
-            index.php
-            .ftp-deploy-sync-state.json
+          # no exclude — deploy everything for test
