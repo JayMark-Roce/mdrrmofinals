@@ -7,27 +7,11 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Laravel Website via FTP
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-
-      - name: Install Dependencies (Composer)
-        run: |
-          composer install --no-dev --optimize-autoloader
-
-      - name: Build Laravel (if needed)
-        run: |
-          php artisan config:cache || true
-          php artisan route:cache || true
-          php artisan view:cache || true
 
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -36,5 +20,12 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: ./             # Deploy the root
           server-dir: ${{ secrets.FTP_TARGET }}
+          local-dir: ./
+          exclude: |
+            **/vendor/**
+            **/node_modules/**
+            **/storage/**
+            **/.git/**
+            **/.github/**
+            **/.env

@@ -899,24 +899,7 @@ body .nav-links a.active {
                     @endif
                 </div>
             </div>
-            <div class="hero-kpis">
-                <div class="hero-kpi-card">
-                    <span>Cases logged</span>
-                    <strong id="metricTotalCasesSmall">--</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Critical handled</span>
-                    <strong id="metricHighPrioritySmall">--</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Active ambulances</span>
-                    <strong id="metricUniqueAmbulancesSmall">--</strong>
-                </div>
-                <div class="hero-kpi-card">
-                    <span>Last completion</span>
-                    <strong id="metricLastCompletedSmall">--</strong>
-                </div>
-            </div>
+            
         </section>
 
         <section class="insight-grid" id="reportsInsights">
@@ -997,8 +980,9 @@ body .nav-links a.active {
                     <thead>
                         <tr>
                             <th>Case #</th>
+                            <th>Caller</th>
+                            <th>Caller Contact</th>
                             <th>Patient</th>
-                            <th>Contact</th>
                             <th>Pickup Address</th>
                             <th>Destination Address</th>
                             <th>Priority</th>
@@ -1011,7 +995,7 @@ body .nav-links a.active {
                     </thead>
                     <tbody id="logs-table-body">
                         <tr>
-            <td colspan="11">
+            <td colspan="12">
                 <div class="logs-empty">
                     <i class="fas fa-spinner fa-spin"></i>
                     <p>{{ $isArchivedView ? 'Loading archived cases...' : 'Loading completed cases...' }}</p>
@@ -1171,6 +1155,10 @@ function generateCasePrintHtml(caseData) {
     const now = new Date().toLocaleString();
     const fromText = (caseData.address || '').toString();
     const toText = (caseData.destination || caseData.to_go_to || '').toString();
+    const patientName = caseData.name || 'Unidentified Patient';
+    const patientContact = caseData.contact || '';
+    const callerContact = caseData.caller_contact || '';
+    const bestContact = patientContact || callerContact || '—';
     
     let fourPsStatus = 'None';
     if (caseData.four_ps_member) {
@@ -1185,11 +1173,11 @@ function generateCasePrintHtml(caseData) {
             <div class="page">
                 <img class="bg-img" src="{{ asset('image/ConductionForm.png') }}" alt="Conduction Form" />
                 
-                <div class="field-name">Name: ${caseData.name || ''}</div>
+                <div class="field-name">Name: ${patientName}</div>
                 <div class="field-age">Age: ${caseData.age || '—'}</div>
                 <div class="field-sex">Sex: ${caseData.sex || caseData.gender || '—'}</div>
                 <div class="field-dob">Date of Birth: ${caseData.date_of_birth ? new Date(caseData.date_of_birth).toLocaleDateString() : '—'}</div>
-                <div class="field-contact">Contact No/s.: ${caseData.contact || ''}</div>
+                <div class="field-contact">Contact No/s.: ${bestContact}</div>
                 <div class="field-address">Address: ${caseData.address || '—'}</div>
                 <div class="field-from">From: ${fromText}</div>
                 <div class="field-to">To: ${toText}</div>
@@ -1497,6 +1485,18 @@ function generateCaseDetailsPrintHtml(caseData) {
                     </div>
                     
                     <div class="info-section">
+                        <h2>Caller Information</h2>
+                        <div class="info-row">
+                            <span class="info-label">Caller Name:</span>
+                            <span class="info-value"><strong>${caseData.caller_name || 'Unknown Caller'}</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Contact Number:</span>
+                            <span class="info-value">${caseData.caller_contact || 'N/A'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
                         <h2>Patient Information</h2>
                         <div class="info-row">
                             <span class="info-label">Patient Name:</span>
@@ -1750,7 +1750,7 @@ function renderLogsList() {
         const emptyLabel = isArchivedView ? 'No archived cases found' : 'No completed cases found';
         logsTableBody.innerHTML = `
             <tr>
-                <td colspan="11">
+                <td colspan="12">
                     <div class="logs-empty">
                         <i class="fas fa-inbox"></i>
                         <p>${emptyLabel}</p>
@@ -1793,11 +1793,20 @@ function renderLogsList() {
                 </div>
             `;
 
+        const callerName = caseData.caller_name || 'Unknown Caller';
+        const callerContact = caseData.caller_contact || caseData.contact || null;
+        const patientName = caseData.name ?? 'Unidentified Patient';
+        const patientContact = caseData.contact || null;
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>Case #${caseData.case_num ?? '—'}</td>
-            <td><div style="font-weight:700;">${caseData.name ?? 'Unidentified Patient'}</div></td>
-            <td class="logs-contact-cell">${caseData.contact ? `📞 ${caseData.contact}` : 'N/A'}</td>
+            <td><div style="font-weight:700;">${callerName}</div></td>
+            <td class="logs-contact-cell">${callerContact ? `📞 ${callerContact}` : 'N/A'}</td>
+            <td>
+                <div style="font-weight:700;">${patientName}</div>
+                ${patientContact ? `<div style="font-size:0.85rem; color:#6b7280;">Patient contact: ${patientContact}</div>` : ''}
+            </td>
             <td>${pickupAddress}</td>
             <td>${destinationAddress}</td>
             <td><span class="logs-pill ${priorityClass}">${priority}</span></td>
@@ -2021,12 +2030,14 @@ function exportCasesCsv() {
         alert(`No ${isArchivedView ? 'archived ' : ''}cases available to export with the current filters.`);
         return;
     }
-    const headers = ['Case Number','Patient','Contact','Pickup Address','Destination Address','Priority','Type','Ambulance','Created At','Completed At'];
+    const headers = ['Case Number','Caller Name','Caller Contact','Patient Name','Patient Contact','Pickup Address','Destination Address','Priority','Type','Ambulance','Created At','Completed At'];
     if (isArchivedView) {
         headers.push('Archived At','Archived By','Archive Note');
     }
     const rows = visible.map(c => [
         c.case_num ?? '',
+        c.caller_name ?? '',
+        c.caller_contact ?? '',
         c.name ?? '',
         c.contact ?? '',
         c.address ?? '',
@@ -2065,6 +2076,8 @@ function printVisibleCasesTable() {
     const rowsHtml = visible.map(c => `
         <tr>
             <td>${c.case_num ?? '—'}</td>
+            <td>${c.caller_name ?? 'Unknown Caller'}</td>
+            <td>${c.caller_contact ?? c.contact ?? 'N/A'}</td>
             <td>${c.name ?? 'Unidentified'}</td>
             <td>${c.contact ?? 'N/A'}</td>
             <td>${c.address ?? 'N/A'}</td>
@@ -2100,8 +2113,10 @@ function printVisibleCasesTable() {
                 <thead>
                     <tr>
                         <th>Case #</th>
+                        <th>Caller</th>
+                        <th>Caller Contact</th>
                         <th>Patient</th>
-                        <th>Contact</th>
+                        <th>Patient Contact</th>
                         <th>Pickup</th>
                         <th>Destination</th>
                         <th>Priority</th>
