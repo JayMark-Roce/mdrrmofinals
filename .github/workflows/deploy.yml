@@ -47,19 +47,20 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      # 1️⃣ Deploy Laravel backend (no vendor)
-      - name: 🚚 Upload Laravel Backend to /laravel/
+      # 1️⃣ Upload Laravel backend into /laravel/ (created inside public_html root)
+      - name: 🚚 Upload Laravel App to /laravel/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /laravel/
           local-dir: ./
           exclude: |
             public/**
             node_modules/**
-            vendor/**                 # ← do NOT upload vendor, Hostinger already has it
+            vendor/**
             .git/**
             .github/**
             tests/**
@@ -69,15 +70,16 @@ jobs:
             package-lock.json
             .ftp-deploy-sync-state.json
 
-      # 2️⃣ Deploy public folder (Frontend assets)
-      - name: 🌐 Upload public/ to /public_html/
+      # 2️⃣ Upload public/ to actual public_html
+      - name: 🌐 Upload public/ to public_html root
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /public_html/
+          port: ${{ secrets.FTP_PORT }}
+          server-dir: /
           local-dir: ./public/
           exclude: |
-            index.php                 # ← keep your Hostinger index.php (it points to /laravel)
+            index.php
             .ftp-deploy-sync-state.json
