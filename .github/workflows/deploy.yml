@@ -44,45 +44,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code from GitHub
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      # 2️⃣ Deploy Laravel app (excluding public/) to /laravel/
-      - name: 🚚 Deploy Laravel App (excluding public/) to /laravel/
+      # 1️⃣ Upload Laravel backend (excluding public and vendor)
+      - name: 🚚 Upload Laravel App to /laravel/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /laravel/
-          local-dir: ./laravel/
+          local-dir: ./
           exclude: |
             public/**
-            vendor/**
             node_modules/**
+            vendor/**        # ← important! prevent overwriting your existing vendor
             .git/**
             .github/**
-            **/.env
-            .tests/**
+            tests/**
             README.md
             vite.config.js
-            .editorconfig
+            package.json
+            package-lock.json
             .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
           log-level: verbose
 
-      # 3️⃣ Deploy only /public files to /public_html/
-      - name: 🌐 Deploy public files to public_html/
+      # 2️⃣ Upload only public folder to Hostinger public_html
+      - name: 🌐 Upload public/ to /public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/
-          local-dir: ./laravel/public/
+          local-dir: ./public/
           exclude: |
-            favicon.ico
-            index.html
+            index.php      # ← we keep your Hostinger index.php
           dangerous-clean-slate: false
           log-level: verbose
