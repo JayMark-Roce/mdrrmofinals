@@ -489,7 +489,7 @@
 <aside class="sidenav" id="sidenav">
     <div class="logo-container" style="display:flex; flex-direction:column; align-items:center;">
         <img src="{{ asset('image/mdrrmologo.jpg') }}" alt="Logo" class="logo-img" style="display:block; margin:0 auto;">
-        <div style="margin-top:8px; width:100%; text-align:center; font-weight:800; color:#fff; letter-spacing:0.5px;">SILANG MDRRMO</div>
+        <div style="margin-top:8px; width:100%; text-align:center; font-weight:800; color:#fff; letter-spacing:0.5px;">SILANG MDRRMO JBUJSBDSU</div>
     </div>
     <nav class="nav-links">
         <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
