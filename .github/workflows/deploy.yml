@@ -32,7 +32,7 @@
 
 
 # ```
-name: 🚀 Auto Deploy Laravel to Hostinger
+name: 🚀 Auto Deploy to Hostinger
 
 on:
   push:
@@ -44,23 +44,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout repository
+      - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      # 1️⃣ Upload Laravel backend (excluding public and vendor)
-      - name: 🚚 Upload Laravel App to /laravel/
+      # 1️⃣ Deploy Laravel backend (no vendor)
+      - name: 🚚 Upload Laravel Backend to /laravel/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
           server-dir: /laravel/
           local-dir: ./
           exclude: |
             public/**
             node_modules/**
-            vendor/**
+            vendor/**                 # ← do NOT upload vendor, Hostinger already has it
             .git/**
             .github/**
             tests/**
@@ -69,21 +68,16 @@ jobs:
             package.json
             package-lock.json
             .ftp-deploy-sync-state.json
-          dangerous-clean-slate: false
-          log-level: verbose
 
-      # 2️⃣ Upload public folder to web root
+      # 2️⃣ Deploy public folder (Frontend assets)
       - name: 🌐 Upload public/ to /public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
           local-dir: ./public/
           exclude: |
-            index.php   # we keep your custom Hostinger index.php
-            .htaccess   # or remove this if you want to deploy your own .htaccess
-          dangerous-clean-slate: false
-          log-level: verbose
+            index.php                 # ← keep your Hostinger index.php (it points to /laravel)
+            .ftp-deploy-sync-state.json
