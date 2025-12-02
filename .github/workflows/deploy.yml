@@ -55,11 +55,14 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /laravel/
-          local-dir: ./
+          
+          # IMPORTANT: upload only your laravel folder, NOT your repo root
+          local-dir: ./laravel/
+
           exclude: |
             public/**
             node_modules/**
-            vendor/**        # ← important! prevent overwriting your existing vendor
+            vendor/**        # ← prevent uploading vendor (causes timeout)
             .git/**
             .github/**
             tests/**
@@ -68,6 +71,7 @@ jobs:
             package.json
             package-lock.json
             .ftp-deploy-sync-state.json
+
           dangerous-clean-slate: false
           log-level: verbose
 
@@ -79,8 +83,12 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /public_html/
-          local-dir: ./public/
+          
+          # IMPORTANT: only public folder
+          local-dir: ./laravel/public/
+
           exclude: |
-            index.php      # ← we keep your Hostinger index.php
+            index.php      # keep Hostinger’s custom index.php
+
           dangerous-clean-slate: false
           log-level: verbose
