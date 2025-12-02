@@ -32,7 +32,7 @@
 
 
 # ```
-name: 🚀 Auto Deploy to Hostinger
+name: 🚀 Auto Deploy Laravel to Hostinger
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout Code
+      - name: ⬇️ Checkout repository
         uses: actions/checkout@v3
 
       # 1️⃣ Upload Laravel backend (excluding public and vendor)
@@ -54,15 +54,13 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /laravel/
-          
-          # IMPORTANT: upload only your laravel folder, NOT your repo root
-          local-dir: ./laravel/
-
+          local-dir: ./
           exclude: |
             public/**
             node_modules/**
-            vendor/**        # ← prevent uploading vendor (causes timeout)
+            vendor/**
             .git/**
             .github/**
             tests/**
@@ -71,24 +69,21 @@ jobs:
             package.json
             package-lock.json
             .ftp-deploy-sync-state.json
-
           dangerous-clean-slate: false
           log-level: verbose
 
-      # 2️⃣ Upload only public folder to Hostinger public_html
+      # 2️⃣ Upload public folder to web root
       - name: 🌐 Upload public/ to /public_html/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
           server-dir: /public_html/
-          
-          # IMPORTANT: only public folder
-          local-dir: ./laravel/public/
-
+          local-dir: ./public/
           exclude: |
-            index.php      # keep Hostinger’s custom index.php
-
+            index.php   # we keep your custom Hostinger index.php
+            .htaccess   # or remove this if you want to deploy your own .htaccess
           dangerous-clean-slate: false
           log-level: verbose
