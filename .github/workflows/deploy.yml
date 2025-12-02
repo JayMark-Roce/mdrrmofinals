@@ -37,7 +37,7 @@ name: 🚀 Auto Deploy to Hostinger
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
