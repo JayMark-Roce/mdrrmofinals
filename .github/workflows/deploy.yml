@@ -47,7 +47,7 @@ jobs:
       - name: ⬇️ Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🚚 Upload Everything to public_html
+      - name: 🚚 Upload to public_html
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -67,19 +67,4 @@ jobs:
             vite.config.js
             package.json
             package-lock.json
-            .ftp-deploy-sync-state.json
-
-
-      # 2️⃣ Upload public/ to actual public_html
-      - name: 🌐 Upload public/ to public_html root
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
-          server-dir: /
-          local-dir: ./public/
-          exclude: |
-            index.php
             .ftp-deploy-sync-state.json
