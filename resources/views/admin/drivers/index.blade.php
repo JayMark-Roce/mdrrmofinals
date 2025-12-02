@@ -990,10 +990,10 @@ html, body {
                     @if($isArchivedView)
                         <i class="fas fa-box-archive"></i> Archived Drivers
                     @else
-                        <i class="fas fa-car-side"></i> Driver command
+                        <i class="fas fa-car-side"></i> Driver command 123
                     @endif
                 </span>
-                <h3>{{ $isArchivedView ? 'The archive never forgets.' : 'Every operator ready for the next dispatch. AHDIADNIADH45454trtrt8743748347SISAdsfsffdfdfdfHS hdsihdsidfdfdf' }}</h3>
+                <h3>{{ $isArchivedView ? 'The archive never forgets.' : 'Every operator ready for the next dispatch.' }}</h3>
                 <p>
                     @if($isArchivedView)
                         Browse preserved driver records, revisit driver details, and keep institutional memory within reach.
