@@ -38,3 +38,4 @@ jobs:
           port: ${{ secrets.FTP_PORT }}
           local-dir: ./
           server-dir: ${{ secrets.FTP_TARGET }}
+          concurrent-uploads: 2
