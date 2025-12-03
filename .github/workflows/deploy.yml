@@ -47,21 +47,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Hostinger FTP
+      # ========================
+      # 1) DEPLOY LARAVEL BACKEND
+      # ========================
+      - name: Deploy Laravel Backend (/laravel)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: ./           # upload project files
-          server-dir: /public_html/  # Hostinger root
-          exclude: |              # DO NOT upload these
-            **/vendor/**
-            **/node_modules/**
-            **/.git/**
-            **/.github/**
-            **/tests/**
-            **/*.md
-            **/.env
-            **/.env.*
+          local-dir: ./
+          server-dir: /laravel/
+          exclude: |
+            public/**
+            vendor/**
+            node_modules/**
+            .git**
+            .github/**
+            ftp-deploy/**
+            .env
+            .env.*
+            storage/framework/cache/**
+            storage/framework/sessions/**
+            storage/framework/views/**
+            storage/logs/**
+
+      # ========================
+      # 2) DEPLOY PUBLIC FOLDER
+      # ========================
+      - name: Deploy Public Folder (/public_html)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          local-dir: ./public
+          server-dir: /public_html/
+          exclude: |
+            .git**
+            .github**
+            storage/**
