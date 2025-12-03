@@ -60,9 +60,12 @@ jobs:
           port: 21
           local-dir: ./
           exclude: |
+            .git/
+            .git/**
+            **/.git/**
+            .github/
+            .github/**
             vendor/**
             node_modules/**
-            .git**
-            .github/**
             **/*.md
             **/.env
