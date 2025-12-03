@@ -57,21 +57,19 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: ./          # must end with /
-          server-dir: /laravel/
+          local-dir: ./                # your project root, must end with /
+          server-dir: /laravel/        # Hostinger backend folder
           exclude: |
-            public/**
-            node_modules/**
-            vendor/**
-            .git**
-            .github/**
-            ftp-deploy/**
-            .env
-            .env.*
-            storage/framework/cache/**
-            storage/framework/sessions/**
-            storage/framework/views/**
-            storage/logs/**
+            public/**                  # public folder deployed separately
+            node_modules/**            # do not upload
+            vendor/**                  # vendor already exists on server
+            .git**                     # never upload git
+            .github/**                 # ignore GitHub workflows
+            ftp-deploy/**              # ignore deploy helper folder
+            .env                       # NEVER upload env
+            .env.*                     # ignore backups
+            storage/framework/**       # compiled files
+            storage/logs/**            # Laravel logs
 
       # ======================================
       # 2) DEPLOY PUBLIC FOLDER TO /public_html
@@ -83,7 +81,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: ./public/    # MUST end with /
+          local-dir: ./public/         # MUST end with /
           server-dir: /public_html/
           exclude: |
             .git**
