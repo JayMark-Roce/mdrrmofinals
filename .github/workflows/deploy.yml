@@ -47,9 +47,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # ========================
-      # 1) DEPLOY LARAVEL BACKEND
-      # ========================
+      # =====================================
+      # 1) DEPLOY LARAVEL BACKEND TO /laravel
+      # =====================================
       - name: Deploy Laravel Backend (/laravel)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -57,12 +57,12 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
-          local-dir: ./
-          server-dir: /laravel/
+          local-dir: ./            # your project root
+          server-dir: /laravel/    # Hostinger backend folder
           exclude: |
             public/**
-            vendor/**
             node_modules/**
+            vendor/**
             .git**
             .github/**
             ftp-deploy/**
@@ -73,9 +73,9 @@ jobs:
             storage/framework/views/**
             storage/logs/**
 
-      # ========================
-      # 2) DEPLOY PUBLIC FOLDER
-      # ========================
+      # ======================================
+      # 2) DEPLOY PUBLIC FOLDER TO /public_html
+      # ======================================
       - name: Deploy Public Folder (/public_html)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
